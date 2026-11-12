@@ -1,0 +1,39 @@
+
+; ******** Source: viaTest.asm
+     1                          ;   AI usage declaration: ChatGPT, VIA test program and clarification of purpose & functionality for via configuration.
+     2                          ;   Ref. to src: 6502 simulator - https://maksimkorzh.github.io/6502js/
+     3                          ;   Ref. to alt. sim.: https://www.masswerk.at/6502/assembler.html
+     4                          ;   To do:
+     5                          ;   - Create LED flashing program
+     6                          ;     - directs CPU to output LED flashing signal to 65C02 Versatile Interface Adapter (VIA)
+     7                          
+     8                          !cpu w65c02
+     9                          
+    10                          PORTB = $6000   ;   via output port (b is default)
+    11                          DDRB  = $6002   ;   via configuration
+    12                          
+    13                          * = $8000
+    14                          
+    15                          viaInit:
+    16  8000 78                     SEI         ;   set maskable interrupts as disabled
+    17                              
+    18                              ; configure all eight pins as outputs
+    19  8001 a2ff                   LDX #$FF
+    20  8003 8e0260                 STX DDRB
+    21                          
+    22  8006 a200                   LDX #$00    ;   clear x register, initializes counter
+    23                          
+    24                          count:
+    25  8008 8e0060                 STX PORTB   ;   output updated counter. Should start at zero.
+    26  800b e8                     INX         ;   increment x by 1
+    27  800c 4c0880                 JMP count   ;   repeat count
+    28                          
+    29                          viaFault:
+    30  800f 4c0f80                 JMP viaFault    ;   catch unexpected interrupts
+    31                          
+    32  8012 eaeaeaeaeaeaeaea...!fill $fffa - *, $ea    ;   pad w/ NOPs
+    33  fffa 0f80               !word viaFault          ;   NMI vector
+    34  fffc 0080               !word viaInit           ;   reset vector
+    35  fffe 0f80               !word viaFault          ;   IRQ/BRK vector
+
+; ******** done
