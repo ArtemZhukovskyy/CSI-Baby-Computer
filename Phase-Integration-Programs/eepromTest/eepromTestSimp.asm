@@ -9,12 +9,13 @@
  
 !cpu w65c02 ;   Declare CPU type
 * = $8000   ;   Set origin to addr. 8000
- 
+
+;   data bus output should be 4C 00 80
 reset: 
     JMP reset
     
 ; Pad the ROM and place the interrupt/reset vectors.
 !fill $fffa - *, $ea    ;   pad w/ NOPs
+!word reset             ;   NMI vector
+!word reset             ;   Reset vector
 !word reset             ;   IRQ/BRK vector
-!word reset             ;
-!word reset             ;
