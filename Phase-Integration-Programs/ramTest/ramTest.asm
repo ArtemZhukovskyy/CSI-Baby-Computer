@@ -14,6 +14,8 @@ PORTB = $6000   ;   via output port (b is default)
 DDRB  = $6002   ;   via configuration
 * = $8000
 
+
+;jsr and rts
 ramInit:
     SEI         ;   set maskable interrupts as disabled
     
@@ -23,7 +25,8 @@ ramInit:
 
     LDX #$00    ;   clear x register
 
-
+ramTest:
+    
 ;ramTest:
 ;    LDA #$AA    ;   test pattern 10101010
 ;    STA 
@@ -37,7 +40,7 @@ memoryFailed:
     JMP viaOutput
 
 viaOutput:
-    STY PORTB   ;   Output result via LED pattern. 
+    STY PORTB   ;   Output result via LED pattern.
 
 ramFault:
     JMP ramFault    ;   trap unexpected interrupts
